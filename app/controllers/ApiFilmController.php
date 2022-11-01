@@ -2,33 +2,36 @@
 require_once './app/models/films.model.php';
 require_once './app/views/api.view.php';
 
-class ApiFilmController
-{
+class ApiFilmController{
 
     private $model;
     private $view;
 
     private $data;
 
-    public function __construct()
-    {
+    public function __construct(){
         $this->model = new FilmsModel();
         $this->view = new APIView();
 
         $this->data = file_get_contents("php://input");
     }
-    private function getData()
-    {
+    private function getData(){
         return json_decode($this->data);
     }
 
-    public function getFilms()
-    {
+    public function getFilms(){
         $films = $this->model->getFilms();
         return $this->view->response($films, 200);
     }
-    public function getFilm($params = null)
-    {
+    public function getFilmsASC(){
+        $films = $this->model->getFilmsASC();
+        return $this->view->response($films, 200);
+    }
+    public function getFilmsDESC(){
+        $films = $this->model->getFilmsDESC();
+        return $this->view->response($films, 200);
+    }
+    public function getFilm($params = null){
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
         if ($film) {
@@ -37,8 +40,7 @@ class ApiFilmController
             $this->view->response("La película con el id = $id no existe", 404);
         }
     }
-    public function insertFilm($params = null)
-    {
+    public function insertFilm($params = null){
         $film = $this->getData();
 
         if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director)) {
@@ -49,8 +51,7 @@ class ApiFilmController
             $this->view->response("Película creada con éxito", 201);
         }
     }
-    public function updateFilm($params = null)
-    {
+    public function updateFilm($params = null){
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
 
@@ -69,8 +70,7 @@ class ApiFilmController
             $this->view->response("Film id = $id not found", 404);
         }
     }
-    public function deleteFilm($params = null)
-    {
+    public function deleteFilm($params = null){
         $id = $params[':ID'];
 
         $film = $this->model->getFilm($id);
