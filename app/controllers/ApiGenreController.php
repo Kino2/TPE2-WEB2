@@ -21,14 +21,6 @@ class ApiGenreController{
         $genres = $this->model->getGenres();
         return $this->view->response($genres, 200);
     }
-    public function getGenresASC() {
-        $genres = $this->model->getGenresASC();
-        return $this->view->response($genres, 200);
-    }
-    public function getGenresDESC() {
-        $genres = $this->model->getGenresDESC();
-        return $this->view->response($genres, 200);
-    }
     public function getGenre($params = null){
         $id = $params[':ID'];
         $genre = $this->model->getGenre($id);
@@ -38,7 +30,7 @@ class ApiGenreController{
             $this->view->response("El género con el id = $id no existe", 404);
         }
     }
-    public function insertGenre($params = null){
+    public function insertGenre(){
         $genre = $this->getData();
 
         if (empty($genre->genero)) {

@@ -6,19 +6,7 @@ class GenresModel{
         $this->db = new PDO('mysql:host=localhost;' . 'dbname=películas;charset=utf8', 'root', '');
     }
     function getGenres(){
-        $query = $this->db->prepare("SELECT * FROM generos");
-        $query->execute();
-        $generos = $query->fetchAll(PDO::FETCH_OBJ);
-        return $generos;
-    }
-    function getGenresASC(){
         $query = $this->db->prepare("SELECT * FROM generos ORDER BY genero ASC");
-        $query->execute();
-        $generos = $query->fetchAll(PDO::FETCH_OBJ);
-        return $generos;
-    }
-    function getGenresDESC(){
-        $query = $this->db->prepare("SELECT * FROM generos ORDER BY genero DESC");
         $query->execute();
         $generos = $query->fetchAll(PDO::FETCH_OBJ);
         return $generos;

@@ -20,15 +20,19 @@ class ApiFilmController{
     }
 
     public function getFilms(){
-        $films = $this->model->getFilms();
-        return $this->view->response($films, 200);
-    }
-    public function getFilmsASC(){
-        $films = $this->model->getFilmsASC();
-        return $this->view->response($films, 200);
-    }
-    public function getFilmsDESC(){
-        $films = $this->model->getFilmsDESC();
+        $size_pages = 10;
+        if (isset($_GET["pagina"])) {
+            if ($_GET["pagina"] == 1) {
+                header("Location:films");
+            } else {
+                $page = $_GET["pagina"];
+            }
+        } else {
+            $page = 1;
+        }
+        $start_where = ($page - 1) * $size_pages;
+
+        $films = $this->model->getFilms($start_where, $size_pages);
         return $this->view->response($films, 200);
     }
     public function getFilm($params = null){
@@ -40,7 +44,7 @@ class ApiFilmController{
             $this->view->response("La película con el id = $id no existe", 404);
         }
     }
-    public function insertFilm($params = null){
+    public function insertFilm(){
         $film = $this->getData();
 
         if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director)) {

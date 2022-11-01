@@ -9,16 +9,12 @@ $router = new Router();
 // defina la tabla de ruteo
 //películas
 $router->addRoute('films', 'GET', 'ApiFilmController', 'getFilms');
-$router->addRoute('films/asc', 'GET', 'ApiFilmController', 'getFilmsASC');
-$router->addRoute('films/desc', 'GET', 'ApiFilmController', 'getFilmsDESC');
 $router->addRoute('films/:ID', 'GET', 'ApiFilmController', 'getFilm');
 $router->addRoute('films', 'POST', 'ApiFilmController', 'insertFilm');
 $router->addRoute('films/:ID', 'PUT', 'ApiFilmController', 'updateFilm');
 $router->addRoute('films/:ID', 'DELETE', 'ApiFilmController', 'deleteFilm');
 //géneros
 $router->addRoute('genres', 'GET', 'ApiGenreController', 'getGenres');
-$router->addRoute('genres/asc', 'GET', 'ApiGenreController', 'getGenresASC');
-$router->addRoute('genres/desc', 'GET', 'ApiGenreController', 'getGenresDESC');
 $router->addRoute('genres/:ID', 'GET', 'ApiGenreController', 'getGenre');
 $router->addRoute('genres', 'POST', 'ApiGenreController', 'insertGenre');
 $router->addRoute('genres/:ID', 'PUT', 'ApiGenreController', 'updateGenre');
