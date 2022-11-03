@@ -21,18 +21,23 @@ class ApiFilmController{
 
     public function getFilms(){
         $size_pages = 10;
-        if (isset($_GET["pagina"])) {
-            if ($_GET["pagina"] == 1) {
+        if (isset($_GET["page"])) {
+            if ($_GET["page"] == 1) {
                 header("Location:films");
             } else {
-                $page = $_GET["pagina"];
+                $page = $_GET["page"];
             }
         } else {
             $page = 1;
         }
         $start_where = ($page - 1) * $size_pages;
-
-        $films = $this->model->getFilms($start_where, $size_pages);
+        if(isset($_GET["sort"])&&($_GET["order"])){
+            $sort = $_GET["sort"];
+            $order = $_GET["order"];
+            $films = $this->model->getFilms($start_where, $size_pages,$sort, $order);
+        } else {
+            $films = $this->model->getFilms($start_where, $size_pages);
+        }
         return $this->view->response($films, 200);
     }
     public function getFilm($params = null){

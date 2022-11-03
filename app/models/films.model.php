@@ -11,8 +11,12 @@ class FilmsModel{
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
     }
-    function getFilms($start_where, $size_pages){
-        $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY genero ASC LIMIT $start_where,$size_pages");
+    function getFilms($start_where, $size_pages, $sort=null, $order=null){
+        if($sort && $order){
+            $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY $sort $order LIMIT $start_where,$size_pages");
+        } else {
+            $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero  LIMIT $start_where,$size_pages");
+        }
         $query->execute();
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
@@ -39,7 +43,6 @@ class FilmsModel{
             $query->execute([$name, $description, $date, $duration, $genre, $director, $id]);
         }
     }
-
     function deleteFilm($id){
         $query = $this->db->prepare('DELETE FROM peliculas WHERE id_pelicula = ?');
         $query->execute([$id]);
