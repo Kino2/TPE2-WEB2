@@ -31,14 +31,16 @@ class ApiFilmController{
             $page = 1;
         }
         $start_where = ($page - 1) * $size_pages;
-        if(isset($_GET["sort"])&&($_GET["order"])){
-            $sort = $_GET["sort"];
-            $order = $_GET["order"];
-            $films = $this->model->getFilms($start_where, $size_pages,$sort, $order);
+        if(isset($_GET["sortby"])&&($_GET["order"])){
+            $data = $this->model->getFilms($start_where, $size_pages,$_GET["sortby"], $_GET["order"]);
         } else {
-            $films = $this->model->getFilms($start_where, $size_pages);
+            $data = $this->model->getFilms($start_where, $size_pages);
         }
-        return $this->view->response($films, 200);
+
+        if(isset($_GET["search"])){
+            $data = $this->model->filterFields($_GET["search"]);
+        }
+        return $this->view->response($data, 200);
     }
     public function getFilm($params = null){
         $id = $params[':ID'];
