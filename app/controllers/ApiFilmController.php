@@ -2,7 +2,7 @@
 require_once './app/models/films.model.php';
 require_once './app/views/api.view.php';
 
-class ApiFilmController{
+class ApiFilmController {
 
     private $model;
     private $view;
@@ -21,34 +21,34 @@ class ApiFilmController{
 
     public function getFilms(){
         $size_pages = 10;
-        if (isset($_GET["page"])) {
-            if ($_GET["page"] == 1) {
-                header("Location:films");
-            } else {
-                $page = $_GET["page"];
-            }
+        $page = intval($_GET["page"]);
+        if (isset($page) && ($page > 0)) {
+            $page = $_GET["page"];
         } else {
             $page = 1;
         }
-        $start_where = ($page - 1) * $size_pages;
-        if(isset($_GET["sortby"])&&($_GET["order"])){
-            $data = $this->model->getFilms($start_where, $size_pages,$_GET["sortby"], $_GET["order"]);
-        } else {
-            $data = $this->model->getFilms($start_where, $size_pages);
-        }
 
-        if(isset($_GET["search"])){
-            $data = $this->model->filterFields($_GET["search"]);
+        $start_where = ($page - 1) * $size_pages;
+        try {
+            if (isset($_GET["sortby"]) && ($_GET["order"])) {
+                $datos = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
+            } else if (isset($_GET["search"])) {
+                $datos = $this->model->filterFields($_GET["search"]);
+            } else {
+                $datos = $this->model->getFilms($start_where, $size_pages);
+            }
+            $this->view->response($datos, 200);
+        } catch (Exception) {
+            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
-        return $this->view->response($data, 200);
     }
-    public function getFilm($params = null){
+    public function getFilm($params = null) {
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
         if ($film) {
             $this->view->response($film, 200);
         } else {
-            $this->view->response("La película con el id = $id no existe", 404);
+            $this->view->response("La pelicula con el id = $id no existe", 404);
         }
     }
     public function insertFilm(){
@@ -59,22 +59,28 @@ class ApiFilmController{
         } else {
             $id = $this->model->insertFilm($film->nombre, $film->descripcion, $film->fecha, $film->duracion, $film->director, $film->id_genero_fk, $film->imagen);
             $film = $this->model->getFilm($id);
-            $this->view->response("Película creada con éxito", 201);
+            $this->view->response("Pelicula creada con exito", 201);
         }
     }
-    public function updateFilm($params = null){
+    public function updateFilm($params = null) {
         $id = $params[':ID'];
+
+        if (!$this->authHelper->isLoggedIn()) {
+            $this->view->response("No estas logeado", 401);
+            return;
+        }
+
         $film = $this->model->getFilm($id);
 
         if ($film) {
-            $body = $this->getData();
-            $name = $body->nombre;
-            $description = $body->descripcion;
-            $date = $body->fecha;
-            $duration = $body->duracion;
-            $director = $body->director;
-            $genre = $body->id_genero_fk;
-            $image = $body->imagen;
+            $data = $this->getData();
+            $name = $data->nombre;
+            $description = $data->descripcion;
+            $date = $data->fecha;
+            $duration = $data->duracion;
+            $director = $data->director;
+            $genre = $data->id_genero_fk;
+            $image = $data->imagen;
             $this->model->editFilm($name, $description, $date, $duration, $director, $genre, $id, $image);
             $this->view->response("Película con el id = $id actualizada con éxito", 200);
         } else {
@@ -83,6 +89,11 @@ class ApiFilmController{
     }
     public function deleteFilm($params = null){
         $id = $params[':ID'];
+
+        if (!$this->authHelper->isLoggedIn()) {
+            $this->view->response("No estas logeado", 401);
+            return;
+        }
 
         $film = $this->model->getFilm($id);
         if ($film) {
