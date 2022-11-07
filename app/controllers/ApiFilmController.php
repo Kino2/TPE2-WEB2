@@ -20,22 +20,30 @@ class ApiFilmController {
     }
 
     public function getFilms(){
+        $sortByDefault = "id_pelicula";
+        $orderDefault = "asc";
         $size_pages = 10;
-        $page = intval($_GET["page"]);
-        if (isset($page) && ($page > 0)) {
-            $page = $_GET["page"];
-        } else {
-            $page = 1;
+        $page = 1;
+        $array = array("id_pelicula","nombre", "descripcion", "fecha", "duracion","imagen","id_genero_fk","director","id_genero","genero");
+        if (isset($_GET["page"])){
+            $page = $this->ConvertNatural($_GET["page"], $page);
         }
 
         $start_where = ($page - 1) * $size_pages;
         try {
-            if (isset($_GET["sortby"]) && ($_GET["order"])) {
+            if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
                 $datos = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
-            } else if (isset($_GET["search"])) {
-                $datos = $this->model->filterFields($_GET["search"]);
+            }  else if (!empty($_GET["sortby"])&&(array_key_exists($_GET["sortby"], $array))) {
+                $datos = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $orderDefault);
+            } else if (!empty($_GET["order"])) {
+                $datos = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
             } else {
                 $datos = $this->model->getFilms($start_where, $size_pages);
+            }
+            if(!empty($_GET["section"]) && !empty($_GET["element"])){
+                $section = $_GET["section"];
+                $element = $_GET["element"];
+                $datos = $this->model->filterFields($section, $element);
             }
             $this->view->response($datos, 200);
         } catch (Exception) {
@@ -51,7 +59,7 @@ class ApiFilmController {
             $this->view->response("La pelicula con el id = $id no existe", 404);
         }
     }
-    public function insertFilm(){
+    public function addFilm(){
         $film = $this->getData();
 
         if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director)) {
@@ -62,14 +70,8 @@ class ApiFilmController {
             $this->view->response("Pelicula creada con exito", 201);
         }
     }
-    public function updateFilm($params = null) {
+    public function editFilm($params = null) {
         $id = $params[':ID'];
-
-        if (!$this->authHelper->isLoggedIn()) {
-            $this->view->response("No estas logeado", 401);
-            return;
-        }
-
         $film = $this->model->getFilm($id);
 
         if ($film) {
@@ -89,12 +91,6 @@ class ApiFilmController {
     }
     public function deleteFilm($params = null){
         $id = $params[':ID'];
-
-        if (!$this->authHelper->isLoggedIn()) {
-            $this->view->response("No estas logeado", 401);
-            return;
-        }
-
         $film = $this->model->getFilm($id);
         if ($film) {
             $this->model->deleteFilm($id);
@@ -102,5 +98,14 @@ class ApiFilmController {
         } else {
             $this->view->response("La película con el id = $id no existe", 404);
         }
+    }
+    public function ConvertNatural($param, $defaultParam){
+        $result = intval($param);
+        if ($result > 0) {
+            $result = $param;
+        } else {
+            $result = $defaultParam;
+        }
+        return $result;
     }
 }

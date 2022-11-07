@@ -5,20 +5,15 @@ class FilmsModel{
     public function __construct() {
         $this->db = new PDO('mysql:host=localhost;' . 'dbname=películas;charset=utf8', 'root', '');
     }
-    function getFilms($start_where, $size_pages, $sort = null, $order = null){
-        if ($sort && $order) {
-                $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY $sort $order LIMIT $start_where,$size_pages");
-                $query->execute();
-        } else {
-            $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero  LIMIT $start_where,$size_pages");
-            $query->execute();
-        }
+    function getFilms($start_where, $size_pages, $sort= "id_pelicula", $order= "asc"){
+        $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY $sort $order LIMIT $start_where,$size_pages");
+        $query->execute();
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
     }
-    function filterFields($filter){
-        $query = $this->db->prepare("SELECT $filter FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero");
-        $query->execute();
+    function filterFields($section, $element){
+        $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ?");
+        $query->execute([$element]);
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
     }
@@ -29,9 +24,8 @@ class FilmsModel{
         return $films;
     }   
     function insertFilm($name, $description, $date, $duration, $director, $genre, $image){
-        $pathImg = $this->uploadImage($image);
         $query = $this->db->prepare("INSERT INTO peliculas (nombre, descripcion, fecha, duracion, imagen, director, id_genero_fk)VALUES(?, ?, ?, ?, ?, ?, ?)");
-        $query->execute([$name, $description, $date, $duration, $pathImg, $director, $genre]);
+        $query->execute([$name, $description, $date, $duration, $image, $director, $genre]);
         return $this->db->lastInsertId();
     }
     function editFilm($name, $description, $date, $duration, $director, $genre, $id, $image = null){
