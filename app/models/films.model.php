@@ -11,7 +11,7 @@ class FilmsModel{
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
     }
-    function filterFields($section, $element){
+    function filterByFields($section, $element){
         $query = $this->db->prepare("SELECT a.*, b.* FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ?");
         $query->execute([$element]);
         $films = $query->fetchAll(PDO::FETCH_OBJ);

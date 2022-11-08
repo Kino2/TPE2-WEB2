@@ -32,20 +32,21 @@ class ApiFilmController {
         $start_where = ($page - 1) * $size_pages;
         try {
             if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
-                $datos = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
+            $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
             }  else if (!empty($_GET["sortby"])&&(array_key_exists($_GET["sortby"], $array))) {
-                $datos = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $orderDefault);
+            $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $orderDefault);
             } else if (!empty($_GET["order"])) {
-                $datos = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
-            } else {
-                $datos = $this->model->getFilms($start_where, $size_pages);
+            $data = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
+            } else if(!empty($_GET["section"]) && !empty($_GET["element"])){
+            $section = $_GET["section"];
+            $element = $_GET["element"];
+        $data = $this->model->filterByFields($section, $element);
+            } 
+            else {
+            $data = $this->model->getFilms($start_where, $size_pages);
             }
-            if(!empty($_GET["section"]) && !empty($_GET["element"])){
-                $section = $_GET["section"];
-                $element = $_GET["element"];
-                $datos = $this->model->filterFields($section, $element);
-            }
-            $this->view->response($datos, 200);
+
+            $this->view->response($data, 200);
         } catch (Exception) {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
