@@ -47,7 +47,7 @@ class AuthApiController {
         $userpass = explode(":", $userpass);
         $user = $userpass[0];
         $pass = $userpass[1];
-        if($user == "Kino" && $pass == "91218"){
+        if($user == "Kino" && $pass == "2402"){
             //  crear un token
             $header = array(
                 'alg' => 'HS256',
@@ -60,7 +60,7 @@ class AuthApiController {
             );
             $header = base64url_encode(json_encode($header));
             $payload = base64url_encode(json_encode($payload));
-            $signature = hash_hmac('SHA256', "$header.$payload", "Clave1234", true);
+            $signature = hash_hmac('SHA256', "$header.$payload", "E1417", true);
             $signature = base64url_encode($signature);
             $token = "$header.$payload.$signature";
              $this->view->response($token, 200);

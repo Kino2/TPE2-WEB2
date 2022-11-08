@@ -1,17 +1,19 @@
 <?php
 require_once './app/models/films.model.php';
+require_once './app/helpers/ApiAuthHelper.php';
 require_once './app/views/api.view.php';
 
 class ApiFilmController {
 
     private $model;
     private $view;
-
+    private $authHelper;
     private $data;
 
     public function __construct(){
         $this->model = new FilmsModel();
         $this->view = new APIView();
+        $this->authHelper = new AuthHelper();
 
         $this->data = file_get_contents("php://input");
     }
@@ -24,7 +26,7 @@ class ApiFilmController {
         $orderDefault = "asc";
         $size_pages = 10;
         $page = 1;
-        $array = array("id_pelicula","nombre", "descripcion", "fecha", "duracion","imagen","id_genero_fk","director","id_genero","genero");
+        $array = array("id_pelicula","nombre", "fecha", "duracion","imagen","id_genero_fk","director","id_genero","genero");
         if (isset($_GET["page"])){
             $page = $this->ConvertNatural($_GET["page"], $page);
         }
@@ -33,14 +35,14 @@ class ApiFilmController {
         try {
             if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
             $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
-            }  else if (!empty($_GET["sortby"])&&(array_key_exists($_GET["sortby"], $array))) {
+            }  else if (!empty($_GET["sortby"]&& isset($array[$_GET["sortby"]]))) {
             $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $orderDefault);
             } else if (!empty($_GET["order"])) {
             $data = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
             } else if(!empty($_GET["section"]) && !empty($_GET["element"])){
             $section = $_GET["section"];
             $element = $_GET["element"];
-        $data = $this->model->filterByFields($section, $element);
+            $data = $this->model->filterByFields($section, $element);
             } 
             else {
             $data = $this->model->getFilms($start_where, $size_pages);
@@ -62,6 +64,10 @@ class ApiFilmController {
     }
     public function addFilm(){
         $film = $this->getData();
+        if(!$this->authHelper->isLoggedIn()){
+            $this->view->response("No estas logeado", 401);
+            return;
+        }
 
         if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director)) {
             $this->view->response("Complete los datos", 400);
@@ -73,6 +79,10 @@ class ApiFilmController {
     }
     public function editFilm($params = null) {
         $id = $params[':ID'];
+        if(!$this->authHelper->isLoggedIn()){
+            $this->view->response("No estas logeado", 401);
+            return;
+        }
         $film = $this->model->getFilm($id);
 
         if ($film) {
