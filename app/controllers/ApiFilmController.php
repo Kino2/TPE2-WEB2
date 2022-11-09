@@ -22,11 +22,11 @@ class ApiFilmController {
     }
 
     public function getFilms(){
+        $fields = $this->checkFilter();
         $sortByDefault = "id_pelicula";
         $orderDefault = "asc";
         $size_pages = 10;
         $page = 1;
-        $array = array("id_pelicula","nombre", "fecha", "duracion","imagen","id_genero_fk","director","id_genero","genero");
         if (isset($_GET["page"])){
             $page = $this->ConvertNatural($_GET["page"], $page);
         }
@@ -52,6 +52,19 @@ class ApiFilmController {
         } catch (Exception) {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
+    }
+    public function checkFilter($params = null){
+        $fields = array(
+            'id_pelicula'=>'id_pelicula',
+            'nombre' => 'nombre',
+            'descripcion'=>'descripcion',
+            'fecha' => 'fecha',
+            'duracion' => 'duracion',
+            'imagen' => 'imagen',
+            'id_genero_fk' => 'id_genero_fk',
+            'director' => 'director'
+        );
+        return $fields;
     }
     public function getFilm($params = null) {
         $id = $params[':ID'];
