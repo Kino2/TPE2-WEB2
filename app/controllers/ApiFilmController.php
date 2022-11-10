@@ -22,7 +22,7 @@ class ApiFilmController {
     }
 
     public function getFilms(){
-        $fields = $this->checkFilter();
+        $sortBy = $this->checkSortBy($_GET["sortby"]);
         $sortByDefault = "id_pelicula";
         $orderDefault = "asc";
         $size_pages = 10;
@@ -30,13 +30,12 @@ class ApiFilmController {
         if (isset($_GET["page"])){
             $page = $this->ConvertNatural($_GET["page"], $page);
         }
-
         $start_where = ($page - 1) * $size_pages;
         try {
-            if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
-            $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $_GET["order"]);
-            }  else if (!empty($_GET["sortby"]&& isset($array[$_GET["sortby"]]))) {
-            $data = $this->model->getFilms($start_where, $size_pages, $_GET["sortby"], $orderDefault);
+            if (!empty($sortBy) && !empty($_GET["order"])) {
+            $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $_GET["order"]);
+            }  else if (!empty($sortBy)){
+            $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $orderDefault);
             } else if (!empty($_GET["order"])) {
             $data = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
             } else if(!empty($_GET["section"]) && !empty($_GET["element"])){
@@ -47,13 +46,14 @@ class ApiFilmController {
             else {
             $data = $this->model->getFilms($start_where, $size_pages);
             }
-
-            $this->view->response($data, 200);
-        } catch (Exception) {
+            if($data){
+                $this->view->response($data, 200);
+            }
+            } catch (Exception) {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
-    public function checkFilter($params = null){
+    public function checkSortBy($params){
         $fields = array(
             'id_pelicula'=>'id_pelicula',
             'nombre' => 'nombre',
@@ -64,8 +64,13 @@ class ApiFilmController {
             'id_genero_fk' => 'id_genero_fk',
             'director' => 'director'
         );
-        return $fields;
+        if(isset($fields[$params])){
+            return $params;
+        }else{
+            return null;
+        }
     }
+
     public function getFilm($params = null) {
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
