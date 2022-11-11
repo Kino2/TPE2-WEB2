@@ -1,9 +1,10 @@
 <?php
-require_once './app/models/films.model.php';
-require_once './app/helpers/ApiAuthHelper.php';
-require_once './app/views/api.view.php';
 
-class ApiFilmController {
+require_once './app/models/ApiFilmModel.php';
+require_once './app/helpers/ApiAuthHelper.php';
+require_once './app/views/ApiView.php';
+
+class ApiFilmController{
 
     private $model;
     private $view;
@@ -24,57 +25,39 @@ class ApiFilmController {
     public function getFilms(){
         $sortByDefault = "id_pelicula";
         $orderDefault = "asc";
-        $size_pages = 10;
+        $pageSize = 10;
         $page = 1;
-        if (isset($_GET["page"])){
-            $page = $this->ConvertNatural($_GET["page"], $page);
+        if(isset($_GET["sortby"])){
+            $sortBy = $this->Sanitize($_GET["sortby"]);
         }
-        $start_where = ($page - 1) * $size_pages;
+        if(isset($_GET["section"])){
+            $section = $this->Sanitize($_GET["section"]);
+        }
+        if (isset($_GET["page"])) {
+            $page = $this->transformNatural($_GET["page"], $page);
+        }
+        $beginning = ($page - 1) * $pageSize;
         try {
-            if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
-            $sortBy = $this->checkToSanitize($_GET["sortby"]);
-            $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $_GET["order"]);
-            }  else if (!empty($_GET["sortby"])){
-            $sortBy = $this->checkToSanitize($_GET["sortby"]);  
-            $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $orderDefault);
+            if (!empty($sortBy) && !empty($_GET["order"])) {
+                $data = $this->model->getFilms($beginning, $pageSize, $sortBy, $_GET["order"]);
+            } else if (!empty($sortBy)) {
+                $data = $this->model->getFilms($beginning, $pageSize, $sortBy, $orderDefault);
             } else if (!empty($_GET["order"])) {
-            $data = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
-            } else if(!empty($_GET["section"]) && !empty($_GET["element"])){
-            $section = $this->checkToSanitize($_GET["section"]);
-            $element = $_GET["element"];
-            $data = $this->model->filterByFields($section, $element);
-            } 
-            else {
-            $data = $this->model->getFilms($start_where, $size_pages);
+                $data = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $_GET["order"]);
+            } else if (!empty($section) && !empty($_GET["element"])) {
+                $element = $_GET["element"];
+                $data = $this->model->filterByFields($section, $element);
+            } else {
+                $data = $this->model->getFilms($beginning, $pageSize);
             }
-            if($data){
+            if ($data) {
                 $this->view->response($data, 200);
             }
-            } catch (Exception) {
+        } catch (Exception) {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
-    public function checkToSanitize($params){
-        $fields = array(
-            'id_pelicula'=>'id_pelicula',
-            'nombre' => 'nombre',
-            'descripcion'=>'descripcion',
-            'fecha' => 'fecha',
-            'duracion' => 'duracion',
-            'imagen' => 'imagen',
-            'id_genero_fk' => 'id_genero_fk',
-            'id_genero' => 'id_genero',
-            'genero' => 'genero',
-            'director' => 'director'
-        );
-        if(isset($fields[$params])){
-            return $params;
-        }else{
-            return null;
-        }
-    }
-
-    public function getFilm($params = null) {
+    public function getFilm($params = null){
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
         if ($film) {
@@ -83,42 +66,49 @@ class ApiFilmController {
             $this->view->response("La pelicula con el id = $id no existe", 404);
         }
     }
+    
     public function addFilm(){
-        $film = $this->getData();
-        if(!$this->authHelper->isLoggedIn()){
+        if (!$this->authHelper->isLoggedIn()) {
             $this->view->response("No estas logeado", 401);
             return;
         }
-
-        if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director)) {
-            $this->view->response("Complete los datos", 400);
-        } else {
-            $id = $this->model->insertFilm($film->nombre, $film->descripcion, $film->fecha, $film->duracion, $film->director, $film->id_genero_fk, $film->imagen);
-            $film = $this->model->getFilm($id);
-            $this->view->response("Pelicula creada con exito", 201);
+        $film = $this->getData();
+        try {
+            if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director) || empty($film->id_genero_fk) || empty($film->imagen)) {
+                $this->view->response("Faltan agregar campos", 400);
+            } else {
+                $id = $this->model->insertFilm($film->nombre, $film->descripcion, $film->fecha, $film->duracion, $film->director, $film->id_genero_fk, $film->imagen);
+                $film = $this->model->getFilm($id);
+                $this->view->response("Pelicula creada con exito", 201);
+            }
+        } catch (Exception) {
+            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
-    public function editFilm($params = null) {
-        $id = $params[':ID'];
-        if(!$this->authHelper->isLoggedIn()){
+    public function editFilm($params = null){
+        if (!$this->authHelper->isLoggedIn()) {
             $this->view->response("No estas logeado", 401);
             return;
         }
+        $id = $params[':ID'];
         $film = $this->model->getFilm($id);
-
-        if ($film) {
-            $data = $this->getData();
-            $name = $data->nombre;
-            $description = $data->descripcion;
-            $date = $data->fecha;
-            $duration = $data->duracion;
-            $director = $data->director;
-            $genre = $data->id_genero_fk;
-            $image = $data->imagen;
-            $this->model->editFilm($name, $description, $date, $duration, $director, $genre, $id, $image);
-            $this->view->response("Película con el id = $id actualizada con éxito", 200);
-        } else {
-            $this->view->response("Film id = $id not found", 404);
+        try {
+            if ($film) {
+                $data = $this->getData();
+                if (empty($data->nombre) || empty($data->descripcion) || empty($data->fecha) || empty($data->duracion) || empty($data->director) || empty($data->id_genero_fk)) {
+                    $this->view->response("Faltan agregar campos", 400);
+                } else {
+                    if (!empty($data->imagen)) {
+                        $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id, $data->imagen);
+                        $this->view->response("Película con el id = $id actualizada con éxito", 200);
+                    } else {
+                        $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id);
+                        $this->view->response("Película con el id = $id actualizada con éxito", 200);
+                    }
+                }
+            }
+        } catch (Exception) {
+            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
     public function deleteFilm($params = null){
@@ -131,7 +121,26 @@ class ApiFilmController {
             $this->view->response("La película con el id = $id no existe", 404);
         }
     }
-    public function ConvertNatural($param, $defaultParam){
+    public function Sanitize($params){
+        $fields = array(
+            'id_pelicula' => 'id_pelicula',
+            'nombre' => 'nombre',
+            'descripcion' => 'descripcion',
+            'fecha' => 'fecha',
+            'duracion' => 'duracion',
+            'imagen' => 'imagen',
+            'id_genero_fk' => 'id_genero_fk',
+            'id_genero' => 'id_genero',
+            'genero' => 'genero',
+            'director' => 'director'
+        );
+        if (isset($fields[$params])) {
+            return $params;
+        } else {
+            return null;
+        }
+    }
+    public function transformNatural($param, $defaultParam){
         $result = intval($param);
         if ($result > 0) {
             $result = $param;
