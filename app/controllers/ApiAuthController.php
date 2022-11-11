@@ -29,11 +29,6 @@ class AuthApiController {
     private function getData() {
         return json_decode($this->data);
     }
-    public function getUser(){
-        $id = 1;
-        $account = $this->model->getUser($id);
-        ;
-    }
     public function getToken() {
         // Obtener "Basic base64(user:pass)
         $basic = $this->authHelper->getAuthHeader();

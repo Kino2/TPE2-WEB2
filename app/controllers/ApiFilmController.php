@@ -22,7 +22,6 @@ class ApiFilmController {
     }
 
     public function getFilms(){
-        $sortBy = $this->checkSortBy($_GET["sortby"]);
         $sortByDefault = "id_pelicula";
         $orderDefault = "asc";
         $size_pages = 10;
@@ -32,14 +31,16 @@ class ApiFilmController {
         }
         $start_where = ($page - 1) * $size_pages;
         try {
-            if (!empty($sortBy) && !empty($_GET["order"])) {
+            if (!empty($_GET["sortby"]) && !empty($_GET["order"])) {
+            $sortBy = $this->checkToSanitize($_GET["sortby"]);
             $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $_GET["order"]);
-            }  else if (!empty($sortBy)){
+            }  else if (!empty($_GET["sortby"])){
+            $sortBy = $this->checkToSanitize($_GET["sortby"]);  
             $data = $this->model->getFilms($start_where, $size_pages, $sortBy, $orderDefault);
             } else if (!empty($_GET["order"])) {
             $data = $this->model->getFilms($start_where, $size_pages, $sortByDefault, $_GET["order"]);
             } else if(!empty($_GET["section"]) && !empty($_GET["element"])){
-            $section = $_GET["section"];
+            $section = $this->checkToSanitize($_GET["section"]);
             $element = $_GET["element"];
             $data = $this->model->filterByFields($section, $element);
             } 
@@ -53,7 +54,7 @@ class ApiFilmController {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
-    public function checkSortBy($params){
+    public function checkToSanitize($params){
         $fields = array(
             'id_pelicula'=>'id_pelicula',
             'nombre' => 'nombre',
@@ -62,6 +63,8 @@ class ApiFilmController {
             'duracion' => 'duracion',
             'imagen' => 'imagen',
             'id_genero_fk' => 'id_genero_fk',
+            'id_genero' => 'id_genero',
+            'genero' => 'genero',
             'director' => 'director'
         );
         if(isset($fields[$params])){
