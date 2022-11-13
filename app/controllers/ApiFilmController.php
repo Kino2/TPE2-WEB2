@@ -22,7 +22,7 @@ class ApiFilmController{
         return json_decode($this->data);
     }
 
-    public function getFilms(){
+    public function getFilms($params = null){
         $sortByDefault = "id_pelicula";
         $orderDefault = "asc";
         $pageSize = 10;
@@ -39,19 +39,18 @@ class ApiFilmController{
         $beginning = ($page - 1) * $pageSize;
         try {
             if (!empty($sortBy) && !empty($_GET["order"])) {
-                $data = $this->model->getFilms($beginning, $pageSize, $sortBy, $_GET["order"]);
+                $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $_GET["order"]);
             } else if (!empty($sortBy)) {
-                $data = $this->model->getFilms($beginning, $pageSize, $sortBy, $orderDefault);
+                $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $orderDefault);
             } else if (!empty($_GET["order"])) {
-                $data = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $_GET["order"]);
-            } else if (!empty($section) && !empty($_GET["element"])) {
-                $element = $_GET["element"];
-                $data = $this->model->filterByFields($section, $element);
+                $films = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $_GET["order"]);
+            } else if (!empty($section) && !empty($_GET["value"])) {
+                $films = $this->model->filterByFields($section, $_GET["value"], $beginning, $pageSize);
             } else {
-                $data = $this->model->getFilms($beginning, $pageSize);
+                $films = $this->model->getFilms($beginning, $pageSize);
             }
-            if ($data) {
-                $this->view->response($data, 200);
+            if ($films) {
+                $this->view->response($films, 200);
             }
         } catch (Exception) {
             $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
@@ -67,7 +66,7 @@ class ApiFilmController{
         }
     }
     
-    public function addFilm(){
+    public function addFilm($params = null){
         if (!$this->authHelper->isLoggedIn()) {
             $this->view->response("No estas logeado", 401);
             return;
@@ -75,7 +74,7 @@ class ApiFilmController{
         $film = $this->getData();
         try {
             if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director) || empty($film->id_genero_fk) || empty($film->imagen)) {
-                $this->view->response("Faltan agregar campos", 400);
+                $this->view->response("Faltan completar campos", 400);
             } else {
                 $id = $this->model->insertFilm($film->nombre, $film->descripcion, $film->fecha, $film->duracion, $film->director, $film->id_genero_fk, $film->imagen);
                 $film = $this->model->getFilm($id);
@@ -96,7 +95,7 @@ class ApiFilmController{
             if ($film) {
                 $data = $this->getData();
                 if (empty($data->nombre) || empty($data->descripcion) || empty($data->fecha) || empty($data->duracion) || empty($data->director) || empty($data->id_genero_fk)) {
-                    $this->view->response("Faltan agregar campos", 400);
+                    $this->view->response("Faltan completar campos", 400);
                 } else {
                     if (!empty($data->imagen)) {
                         $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id, $data->imagen);
@@ -130,7 +129,6 @@ class ApiFilmController{
             'duracion' => 'duracion',
             'imagen' => 'imagen',
             'id_genero_fk' => 'id_genero_fk',
-            'id_genero' => 'id_genero',
             'genero' => 'genero',
             'director' => 'director'
         );

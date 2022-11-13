@@ -17,11 +17,11 @@ class FilmsModel{
         $films = $query->fetch(PDO::FETCH_OBJ);
         return $films;
     }   
-    function filterByFields($section, $element){
-        $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ? ");
-        $query->execute([$element]);
-        $films = $query->fetchAll(PDO::FETCH_OBJ);
-        return $films;
+    function filterByFields($section, $value, $beginning, $pageSize, $sort="id_pelicula", $order="asc"){
+            $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ? ORDER BY $sort $order LIMIT $beginning, $pageSize");
+            $query->execute([$value]);
+            $films = $query->fetchAll(PDO::FETCH_OBJ);
+            return $films;
     }
     function insertFilm($name, $description, $date, $duration, $director, $genre, $image){
             $query = $this->db->prepare("INSERT INTO peliculas (nombre, descripcion, fecha, duracion, imagen, director, id_genero_fk) VALUES (?, ?, ?, ?, ?, ?, ?)");

@@ -1,6 +1,7 @@
 <?php
 
 class AuthHelper {
+    
     function getToken(){
         $auth = $this->getAuthHeader(); 
         $auth = explode(" ", $auth);
