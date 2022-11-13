@@ -1,1 +1,4 @@
 # TPE2-WEB2
+ENDPOINT
+GET
+ea
