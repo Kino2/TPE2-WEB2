@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-10-2022 a las 17:49:21
+-- Tiempo de generación: 12-11-2022 a las 20:15:43
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.10
 
@@ -106,7 +106,7 @@ INSERT INTO `peliculas` (`id_pelicula`, `nombre`, `descripcion`, `fecha`, `durac
 (95, 'Shrek', 'Un malvado señor exilia a las criaturas de los cuentos de hadas al pantano de un ogro gruñón, que debe emprender una búsqueda y rescatar a una princesa para el señor con el fin de recuperar sus tierras.', '2001-07-19', '00:00:00', 'img/films/634c7f85af0f4.jpg', 49, 'Andrew Adamson'),
 (96, 'Toy Story', 'Un vaquero de juguete se encuentra celoso y amenazado cuando un nuevo juguete, un guardián espacial, se convierte en el favorito del niño al que pertenecen.', '1996-03-14', '01:21:00', 'img/films/634c8115f1c92.jpg', 49, ' John Lasseter'),
 (97, 'Cars', 'Un coche de carreras llamado Rayo McQueen se encuentra en Radiador Springs, donde descubre el verdadero significado de la amistad y la familia.', '2006-06-29', '01:57:00', 'img/films/634c81d9e7c28.jpg', 49, ' John Lasseter'),
-(98, 'Ratatouille', 'Una rata que sabe cocinar establece una inusual alianza con un joven trabajador de la cocina de un famoso restaurante de París.', '2007-07-28', '01:51:00', 'img/films/634c829cb2bb5.jpg', 49, 'Brad Bird'),
+(98, 'Ratatouille', 'Una rata que sabe cocinar establece una inusual alianza con un joven trabajador de la cocina de un famoso restaurante de París.', '2007-07-28', '01:51:00', 'img/films/6366b5cfe8fcd.jpg', 49, 'Brad Bird'),
 (99, 'Parásitos', 'La familia Ki-taek, todos desempleados, se ve envuelta en un incidente con la rica y glamurosa familia Parks.', '2019-05-30', '02:12:00', 'img/films/634c83c959b55.jpg', 7, 'Bong Joon-ho'),
 (100, 'Llamas de venganza', 'Una joven trata de entender cómo obtuvo misteriosamente el poder de prender fuego a las cosas con su mente.', '2022-05-13', '01:35:00', 'img/films/634c88eee0df9.jpg', 7, ' Keith Thomas');
 
@@ -119,6 +119,7 @@ INSERT INTO `peliculas` (`id_pelicula`, `nombre`, `descripcion`, `fecha`, `durac
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `usuario` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -126,8 +127,8 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`) VALUES
-(1, 'kino@gmail.com', '$2a$12$yoHsgzW4yDGya7SXvD98LOAj1VhCFv2YppRlzKuDxL8yr4WuTswAu');
+INSERT INTO `usuarios` (`id`, `email`, `usuario`, `password`) VALUES
+(1, 'kino@gmail.com', 'Kino', '$2a$12$yoHsgzW4yDGya7SXvD98LOAj1VhCFv2YppRlzKuDxL8yr4WuTswAu');
 
 --
 -- Índices para tablas volcadas
@@ -160,13 +161,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `generos`
 --
 ALTER TABLE `generos`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
-  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
