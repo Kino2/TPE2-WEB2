@@ -4,7 +4,7 @@ require_once './app/models/ApiFilmModel.php';
 require_once './app/helpers/ApiAuthHelper.php';
 require_once './app/views/ApiView.php';
 
-class ApiFilmController{
+class ApiFilmController {
 
     private $model;
     private $view;
@@ -27,33 +27,38 @@ class ApiFilmController{
         $orderDefault = "asc";
         $pageSize = 10;
         $page = 1;
-        if(isset($_GET["sortby"])){
+        if (isset($_GET["sortby"])) {
             $sortBy = $this->Sanitize($_GET["sortby"]);
         }
-        if(isset($_GET["section"])){
+        if (isset($_GET["section"])) {
             $section = $this->Sanitize($_GET["section"]);
         }
         if (isset($_GET["page"])) {
             $page = $this->transformNatural($_GET["page"], $page);
         }
+        if(isset($_GET["order"])){
+            $order = $this->Sanitize($_GET["order"]);
+        }
         $beginning = ($page - 1) * $pageSize;
         try {
-            if (!empty($sortBy) && !empty($_GET["order"])) {
-                $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $_GET["order"]);
+            if (!empty($sortBy) && !empty($order) && empty($section) && empty($_GET["value"])) {
+                $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $order);
+            } else if (!empty($section) && !empty($_GET["value"]) && !empty($sortBy) && !empty($order)) {
+                $films = $this->model->filterByFields($section, $_GET["value"], $beginning, $pageSize, $sortBy, $order);
             } else if (!empty($sortBy)) {
                 $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $orderDefault);
-            } else if (!empty($_GET["order"])) {
-                $films = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $_GET["order"]);
+            } else if (!empty($order)) {
+                $films = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $order);
             } else if (!empty($section) && !empty($_GET["value"])) {
-                $films = $this->model->filterByFields($section, $_GET["value"], $beginning, $pageSize);
+                $films = $this->model->filterByFields($section, $_GET["value"], $beginning, $pageSize, $sortByDefault, $orderDefault);
             } else {
                 $films = $this->model->getFilms($beginning, $pageSize);
             }
-            if ($films) {
-                $this->view->response($films, 200);
-            }
         } catch (Exception) {
-            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
+            $this->view->response("El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
+        }
+        if (isset($films)) {
+            $this->view->response($films, 200);
         }
     }
     public function getFilm($params = null){
@@ -62,10 +67,10 @@ class ApiFilmController{
         if ($film) {
             $this->view->response($film, 200);
         } else {
-            $this->view->response("La pelicula con el id = $id no existe", 404);
+            $this->view->response("La pelicula con la id = $id no existe", 404);
         }
     }
-    
+
     public function addFilm($params = null){
         if (!$this->authHelper->isLoggedIn()) {
             $this->view->response("No estas logeado", 401);
@@ -73,7 +78,7 @@ class ApiFilmController{
         }
         $film = $this->getData();
         try {
-            if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director) || empty($film->id_genero_fk) || empty($film->imagen)) {
+            if (empty($film->nombre) || empty($film->descripcion) || empty($film->fecha) || empty($film->duracion) || empty($film->director) || empty($film->id_genero_fk) || empty($film->imagen)){
                 $this->view->response("Faltan completar campos", 400);
             } else {
                 $id = $this->model->insertFilm($film->nombre, $film->descripcion, $film->fecha, $film->duracion, $film->director, $film->id_genero_fk, $film->imagen);
@@ -81,7 +86,7 @@ class ApiFilmController{
                 $this->view->response("Pelicula creada con exito", 201);
             }
         } catch (Exception) {
-            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
+            $this->view->response("El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
     public function editFilm($params = null){
@@ -94,20 +99,20 @@ class ApiFilmController{
         try {
             if ($film) {
                 $data = $this->getData();
-                if (empty($data->nombre) || empty($data->descripcion) || empty($data->fecha) || empty($data->duracion) || empty($data->director) || empty($data->id_genero_fk)) {
+                if (empty($data->nombre) || empty($data->descripcion) || empty($data->fecha) || empty($data->duracion) || empty($data->director) || empty($data->id_genero_fk)){
                     $this->view->response("Faltan completar campos", 400);
-                } else {
-                    if (!empty($data->imagen)) {
+                } else if (!empty($data->imagen)) {
                         $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id, $data->imagen);
-                        $this->view->response("Película con el id = $id actualizada con éxito", 200);
-                    } else {
+                        $this->view->response("Película con la id = $id actualizada con éxito", 200);
+                } else if (empty($data->imagen)){
                         $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id);
-                        $this->view->response("Película con el id = $id actualizada con éxito", 200);
-                    }
-                }
+                        $this->view->response("Película con la id = $id actualizada con éxito", 200);
+                } 
+              } else {
+                $this->view->response("La película con la id = $id no existe", 404);
             }
-        } catch (Exception) {
-            $this->view->response("Error: El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
+            } catch (Exception) {
+            $this->view->response("El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
         }
     }
     public function deleteFilm($params = null){
@@ -117,7 +122,7 @@ class ApiFilmController{
             $this->model->deleteFilm($id);
             $this->view->response("La película fue borrada con éxito", 200);
         } else {
-            $this->view->response("La película con el id = $id no existe", 404);
+            $this->view->response("La película con la id = $id no existe", 404);
         }
     }
     public function Sanitize($params){
@@ -132,13 +137,17 @@ class ApiFilmController{
             'genero' => 'genero',
             'director' => 'director'
         );
-        if (isset($fields[$params])) {
+        $order = array(
+            'asc' => 'asc',
+            'desc' => 'desc'
+        );
+        if (isset($fields[$params])||(isset($order[$params]))) {
             return $params;
         } else {
             return null;
         }
     }
-    public function transformNatural($param, $defaultParam){
+    public function transformNatural($param, $defaultParam) {
         $result = intval($param);
         if ($result > 0) {
             $result = $param;
