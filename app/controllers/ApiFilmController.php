@@ -27,17 +27,20 @@ class ApiFilmController {
         $orderDefault = "asc";
         $pageSize = 10;
         $page = 1;
-        if (isset($_GET["sortby"])) {
-            $sortBy = $this->SanitizeFields($_GET["sortby"]);
-        }
-        if (isset($_GET["section"])) {
-            $section = $this->SanitizeFields($_GET["section"]);
-        }
         if (isset($_GET["page"])) {
             $page = $this->transformNatural($_GET["page"], $page);
         }
+        if(isset($_GET["limit"])){
+            $pageSize = $this->transformNatural($_GET["limit"],$pageSize);
+        }
+        if (isset($_GET["sortby"])) {
+            $sortBy = $this->SanitizeFields($_GET["sortby"]);
+        }
         if(isset($_GET["order"])){
             $order = $_GET["order"];
+        }
+        if (isset($_GET["section"])) {
+            $section = $this->SanitizeFields($_GET["section"]);
         }
         if(isset($_GET["value"])){
             $value = $_GET["value"];
@@ -162,7 +165,7 @@ class ApiFilmController {
     }
     public function transformNatural($param, $defaultParam) {
         $result = intval($param);
-        if ($result > 0) {
+        if ($result >= 0) {
             $result = $param;
         } else {
             $result = $defaultParam;
