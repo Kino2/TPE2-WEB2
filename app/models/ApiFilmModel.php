@@ -5,8 +5,8 @@ class FilmsModel{
     public function __construct() {
         $this->db = new PDO('mysql:host=localhost;' . 'dbname=películas;charset=utf8', 'root', '');
     }
-    function getFilms($beginning, $pageSize, $sort= "id_pelicula", $order= "asc"){
-        $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY $sort $order LIMIT $beginning, $pageSize ");
+    function getFilms($beginning, $pageSize, $sortby, $order){
+        $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero ORDER BY $sortby $order LIMIT $beginning, $pageSize ");
         $query->execute();
         $films = $query->fetchAll(PDO::FETCH_OBJ);
         return $films;
@@ -17,8 +17,8 @@ class FilmsModel{
         $films = $query->fetch(PDO::FETCH_OBJ);
         return $films;
     }   
-    function filterByFields($section, $value, $beginning, $pageSize, $sort="id_pelicula", $order="asc"){
-            $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ? ORDER BY $sort $order LIMIT $beginning, $pageSize");
+    function filterByFields($section, $value, $beginning, $pageSize, $sortby, $order){
+            $query = $this->db->prepare("SELECT a.*, b.genero FROM peliculas a INNER JOIN generos b ON a.id_genero_fk = b.id_genero WHERE $section = ? ORDER BY $sortby $order LIMIT $beginning, $pageSize");
             $query->execute([$value]);
             $films = $query->fetchAll(PDO::FETCH_OBJ);
             return $films;
@@ -29,13 +29,8 @@ class FilmsModel{
             return $this->db->lastInsertId();
     }
     function editFilm($name, $description, $date, $duration, $director, $genre, $id, $image = null){
-        if ($image) {
             $query = $this->db->prepare("UPDATE peliculas SET nombre = ?, descripcion = ?, fecha = ?, duracion = ?, imagen = ?, id_genero_fk = ?, director = ? WHERE id_pelicula = ? ");
             $query->execute([$name, $description, $date, $duration, $image, $genre, $director, $id]);
-        } else {
-            $query = $this->db->prepare("UPDATE peliculas SET nombre = ?, descripcion = ?, fecha = ?, duracion = ?, id_genero_fk = ?, director = ? WHERE id_pelicula = ? ");
-            $query->execute([$name, $description, $date, $duration, $genre, $director, $id]);
-        }
     }
     function deleteFilm($id){
         $query = $this->db->prepare('DELETE FROM peliculas WHERE id_pelicula = ?');

@@ -15,5 +15,7 @@ $router->addRoute('films/:ID', 'PUT', 'ApiFilmController', 'editFilm');
 $router->addRoute('films/:ID', 'DELETE', 'ApiFilmController', 'deleteFilm');
 //Token
 $router->addRoute('auth/token', 'GET', 'AuthApiController', 'getToken');
+//Página no encontrada
+$router->setDefaultRoute('ApiFilmController', 'pageNotFound');
 
 $router->route($_GET["resource"], $_SERVER['REQUEST_METHOD']);
