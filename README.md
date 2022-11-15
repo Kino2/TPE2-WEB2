@@ -14,6 +14,7 @@ Una sencilla API REST para el manejo de CRUD con las películas de PelíKino
 ## Detalles de los endpoints de cada acción
 **PAGINACIÓN:**
 - Mostrar todas las películas con paginación -> http://localhost/TPE2-WEB2/api/films?page=numentero
+
 **GET:**
 **Por default, el campo asignado en sortby es "id_pelicula" y el orden ascendente.**
 - Mostrar todas las películas -> http://localhost/TPE2-WEB2/api/films
@@ -25,10 +26,12 @@ Una sencilla API REST para el manejo de CRUD con las películas de PelíKino
 - Filtrar, elegir campo y no poner el order (por defecto es ascendente) -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&sortby=campo
 - Filtrar, elegir el orden y no poner el campo (por defecto es id_pelicula) -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&order=asc-desc
 - Obtener el token de autenticación -> http://localhost/TPE2-WEB2/api/auth/token -> Aclaración: Al logearnos correctamente obtendremos el token el status code será "401 Unauthorized".
+
 Si cualquiera de estas solicitudes sale bien, el status code será "200 OK", de lo contrario será "400 Bad Request" (Salvo en la autenticación).
 **GET (Búsqueda por ID):**
 - Mostrar una película con cierto id -> http://localhost/TPE2-WEB2/api/films/:ID
 Si la solicitud sale bien, el status code será "200 OK", de lo contrario será "
+
 **POST:**
 **Es necesario estar logeado para usar este método**
 - Crear una película nueva -> http://localhost/TPE2-WEB2/api/films -> Aclaración: Es necesario agregar: nombre, descripción, fecha, duración, director, id_genero_fk e imagen. Si no se llenan todos los campos, el status code será "400 Bad Request", si el usuario no se encuentra logeado el status code será "401 Unauthorized".
