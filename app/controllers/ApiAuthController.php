@@ -46,7 +46,7 @@ class AuthApiController{
         $user = $userpass[0];
         $pass = $userpass[1];
         $account = $this->model->getUser($user);
-        if ($user == $account->usuario && password_verify($pass, $account->password)) {
+        if ($account && $user == $account->usuario && password_verify($pass, $account->password)) {
             $header = array(
                 'alg' => 'HS256',
                 'typ' => 'JWT'
