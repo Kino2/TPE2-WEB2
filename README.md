@@ -13,12 +13,12 @@ Una sencilla API REST para el manejo de CRUD con las películas de PelíKino
 - page -> Numero de la página en la que se encuentra.
 ## Detalles de los endpoints de cada acción
 **PAGINACIÓN:**
-- Mostrar todas las películas con paginación -> http://localhost/TPE2-WEB2/api/films?page=numnatural
+- Mostrar la colección paginada -> http://localhost/TPE2-WEB2/api/films?page=numnatural
     Ejemplo: http://localhost/TPE2-WEB2/api/films?page=2
 - La paginación anda para cualquier solicitud GET que se solicite.
 
 **GET:**
-**Por default, el campo asignado en sortby es "id_pelicula" y el orden ascendente.**
+**Por default, el campo asignado en sortby es "id_pelicula" y el order "asc".**
 - Mostrar todas las películas -> http://localhost/TPE2-WEB2/api/films
 - Mostrar una colección o película filtrada por alguno de sus campos -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo
     Ejemplo: http://localhost/TPE2-WEB2/api/films?section=genero&value=drama
@@ -38,7 +38,7 @@ Una sencilla API REST para el manejo de CRUD con las películas de PelíKino
 Si cualquiera de estas solicitudes sale bien, el status code será "200 OK", de lo contrario será "400 Bad Request" (Salvo en la autenticación).
 
 **GET (Búsqueda por ID):**
-- Mostrar una película con cierto id -> http://localhost/TPE2-WEB2/api/films/:ID
+- Mostrar una película con cierta id -> http://localhost/TPE2-WEB2/api/films/:ID
     Ejemplo: http://localhost/TPE2-WEB2/api/films/24
 Si la solicitud sale bien y la id existe, el status code será "200 OK", de lo contrario será "404 Not found".
 
