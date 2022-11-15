@@ -46,19 +46,26 @@ class ApiFilmController {
         try {
             if (!empty($sortBy) && !empty($order) && empty($section) && empty($value)) {
                 $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $order);
-            } else if (!empty($sortBy) && empty($order) && empty($section) && empty($value)) {
+            } 
+            else if (!empty($sortBy) && empty($order) && empty($section) && empty($value)) {
                 $films = $this->model->getFilms($beginning, $pageSize, $sortBy, $orderDefault);
-            } else if (!empty($order) && empty($sortBy) && empty($section) && empty($value)) {
+            } 
+            else if (!empty($order) && empty($sortBy) && empty($section) && empty($value)) {
                 $films = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $order);
-            } else if (!empty($section) && !empty($value) && empty($sortBy) && empty($order)) {
+            }
+            else if (!empty($section) && !empty($value) && empty($sortBy) && empty($order)) {
                 $films = $this->model->filterByFields($section, $value, $beginning, $pageSize, $sortByDefault, $orderDefault);
-            } else if (!empty($section) && !empty($value) && !empty($sortBy) && !empty($order)) {
+            } 
+            else if (!empty($section) && !empty($value) && !empty($sortBy) && !empty($order)) {
                 $films = $this->model->filterByFields($section, $value, $beginning, $pageSize, $sortBy, $order);
-            } else if (!empty($section) && !empty($value) && !empty($sortBy) && empty($order)){
+            } 
+            else if (!empty($section) && !empty($value) && !empty($sortBy) && empty($order)){
                 $films = $this->model->filterByFields($section,$value,$beginning,$pageSize,$sortBy,$orderDefault);
-            } else if (!empty($section) && !empty($value) && !empty($order) && empty($sortBy)){
+            } 
+            else if (!empty($section) && !empty($value) && !empty($order) && empty($sortBy)){
                 $films = $this->model->filterByFields($section,$value,$beginning,$pageSize,$sortByDefault,$order);
-            } else {
+            } 
+            else {
                 $films = $this->model->getFilms($beginning, $pageSize, $sortByDefault, $orderDefault);
             }
         } catch (Exception) {
@@ -74,7 +81,7 @@ class ApiFilmController {
         if ($film) {
             $this->view->response($film, 200);
         } else {
-            $this->view->response("La pelicula con la id = $id no existe", 404);
+            $this->view->response("La pelicula con la id $id no existe", 404);
         }
     }
 
@@ -110,13 +117,13 @@ class ApiFilmController {
                     $this->view->response("Faltan completar campos", 400);
                 } else if (!empty($data->imagen)) {
                         $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id, $data->imagen);
-                        $this->view->response("Pelicula con la id = $id actualizada con éxito", 200);
+                        $this->view->response("Pelicula con la id $id actualizada con éxito", 200);
                 } else if (empty($data->imagen)){
                         $this->model->editFilm($data->nombre, $data->descripcion, $data->fecha, $data->duracion, $data->director, $data->id_genero_fk, $id);
-                        $this->view->response("Pelicula con la id = $id actualizada con éxito", 200);
+                        $this->view->response("Pelicula con la id $id actualizada con éxito", 200);
                 } 
               } else {
-                $this->view->response("La pelicula con la id = $id no existe", 404);
+                $this->view->response("La pelicula con la id $id no existe", 404);
             }
             } catch (Exception) {
             $this->view->response("El servidor no pudo interpretar la solicitud dada una sintaxis invalida", 400);
@@ -129,7 +136,7 @@ class ApiFilmController {
             $this->model->deleteFilm($id);
             $this->view->response("La pelicula fue borrada con éxito", 200);
         } else {
-            $this->view->response("La pelicula con la id = $id no existe", 404);
+            $this->view->response("La pelicula con la id $id no existe", 404);
         }
     }
     public function SanitizeFields($params){
@@ -141,8 +148,8 @@ class ApiFilmController {
             'duracion' => 'duracion',
             'imagen' => 'imagen',
             'id_genero_fk' => 'id_genero_fk',
-            'genero' => 'genero',
-            'director' => 'director'
+            'director' => 'director',
+            'genero' => 'genero'
         );
         if (isset($fields[$params])) {
             return $params;

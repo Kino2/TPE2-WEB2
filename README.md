@@ -13,24 +13,34 @@ Una sencilla API REST para el manejo de CRUD con las películas de PelíKino
 - page -> Numero de la página en la que se encuentra.
 ## Detalles de los endpoints de cada acción
 **PAGINACIÓN:**
-- Mostrar todas las películas con paginación -> http://localhost/TPE2-WEB2/api/films?page=numentero
+- Mostrar todas las películas con paginación -> http://localhost/TPE2-WEB2/api/films?page=numnatural
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?page=2
+- La paginación anda para cualquier solicitud GET que se solicite.
 
 **GET:**
 **Por default, el campo asignado en sortby es "id_pelicula" y el orden ascendente.**
 - Mostrar todas las películas -> http://localhost/TPE2-WEB2/api/films
-- Mostrar una colección filtrada por alguno de sus campos -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo
+- Mostrar una colección o película filtrada por alguno de sus campos -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?section=genero&value=drama
 - Mostrar una colección que se pueda ordenar por cualquier campo -> http://localhost/TPE2-WEB2/api/films?sortby=campo&order=asc-desc
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?sortby=id_genero_fk&order=desc
 - Ordenar una colección sin especificar el orden -> http://localhost/TPE2-WEB2/api/films?sortby=campo 
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?sortby=nombre
 - Ordenar una colección sin especificar el campo -> http://localhost/TPE2-WEB2/api/films?order=asc-desc
-- Filtrar, ordenar y paginar combinados -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&sortby=campo&order=asc-desc&page=numentero
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?order=asc
+- Filtrar, ordenar y paginar combinados -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&sortby=campo&order=asc-desc&page=numnatural
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?section=genero&value=crimen&sortby=id_pelicula&order=desc&page=1
 - Filtrar, elegir campo y no poner el order (por defecto es ascendente) -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&sortby=campo
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?section=id_pelicula&value=25&sortby=duracion
 - Filtrar, elegir el orden y no poner el campo (por defecto es id_pelicula) -> http://localhost/TPE2-WEB2/api/films?section=campo&value=valordelcampo&order=asc-desc
+    Ejemplo: http://localhost/TPE2-WEB2/api/films?section=director&value=andrew%20adamson&order=asc
 - Obtener el token de autenticación -> http://localhost/TPE2-WEB2/api/auth/token -> Aclaración: Al logearnos correctamente obtendremos el token el status code será "401 Unauthorized".
-
 Si cualquiera de estas solicitudes sale bien, el status code será "200 OK", de lo contrario será "400 Bad Request" (Salvo en la autenticación).
+
 **GET (Búsqueda por ID):**
 - Mostrar una película con cierto id -> http://localhost/TPE2-WEB2/api/films/:ID
-Si la solicitud sale bien, el status code será "200 OK", de lo contrario será "
+    Ejemplo: http://localhost/TPE2-WEB2/api/films/24
+Si la solicitud sale bien y la id existe, el status code será "200 OK", de lo contrario será "404 Not found".
 
 **POST:**
 **Es necesario estar logeado para usar este método**
@@ -39,15 +49,17 @@ Si la solicitud sale bien, el status code sera "201 Created", de lo contrario, s
 
 **PUT:**
 **Es necesario estar logeado para usar este método**
-- Editar una película -> http://localhost/TPE2-WEB2/api/films/:ID -> Aclaración: Se puede editar cualquiera de los campos mencionados en el método POST. No se puede dejar ninguno de esos campos vacíos, de lo contrario el status code será "400 Bad Request", si se intenta editar una pelicula en la que cuya id no exista, el status code será "404 Not found", y si el usuario no se encuentra logeado el status code será "401 Unauthorized".
+- Editar una película -> http://localhost/TPE2-WEB2/api/films/:ID -> Aclaración: Se puede editar cualquiera de los campos mencionados en el método POST. Salvo la imagen, no se puede dejar ninguno de esos campos vacíos, de lo contrario el status code será "400 Bad Request", si se intenta editar una pelicula en la que cuya id no exista, el status code será "404 Not found", y si el usuario no se encuentra logeado el status code será "401 Unauthorized".
 Si la solicitud sale bien, el status code sera "200 OK", de lo contrario, será "400 Bad Request".
 
 **DELETE**
 - Borrar una película -> http://localhost/TPE2-WEB2/api/films/:ID -> Aclaración: Si se intenta borrar una película en la que cuya id no exista, el status code será "404 Not found".
 Si la solicitud sale bien, el status code sera "200 OK".
 
-## Otros detalles
-A continuación detallaré algunos datos importantes a la hora de hacer el CRUD:
+## Detalles a tener en cuenta
+- Cuando el campo que se detalla en section o sortby no existe, o cuando no se detalla un numero natural de página, se seguirá mostrando el json sin hacer ningún cambio (solo con el order por defecto).
+- Cuando el valor de campo que se detalla en value no existe o cuando la página que se detalla no tiene una coleccion para mostrar, se mostrará un arreglo vacío.
+- Cuando el valor del order no es ni ASC o DESC, saldrá un error con el status code "400 Bad Request".
 - El usuario correcto para usar el POST y PUT es el que se encuentra en la tabla usuarios de la base de datos. El nombre es: Kino y su Contraseña es: 91218
 - Las id de los distintos géneros a la hora de hacer POST o PUT son:
     id_genero_fk = 1 -> Género = Acción

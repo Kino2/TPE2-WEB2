@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2022 a las 20:15:43
+-- Tiempo de generación: 15-11-2022 a las 17:42:16
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.10
 
@@ -20,31 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `películas`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `generos`
---
-
-CREATE TABLE `generos` (
-  `id_genero` int(11) NOT NULL,
-  `genero` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `generos`
---
-
-INSERT INTO `generos` (`id_genero`, `genero`) VALUES
-(1, 'Acción'),
-(2, 'Terror'),
-(4, 'Crimen'),
-(5, 'Fantasía'),
-(6, 'Drama'),
-(7, 'Suspenso'),
-(44, 'Comedia'),
-(49, 'Infantil');
 
 -- --------------------------------------------------------
 
@@ -103,42 +78,16 @@ INSERT INTO `peliculas` (`id_pelicula`, `nombre`, `descripcion`, `fecha`, `durac
 (83, 'Juego de gemelas', 'Annie y Hallie son gemelas idénticas separadas al nacer y criadas cada una por uno de sus padres. Cuando se conocen en un campamento de verano, forjan un plan para volver a juntar a sus padres.', '1999-01-28', '02:08:00', 'img/films/6349e83c0fb06.jpg', 44, 'Nancy Meyers'),
 (92, 'No respires', 'Unos jóvenes ladrones creen haber encontrado la oportunidad de cometer el robo perfecto. Su objetivo será un ciego solitario, poseedor de miles de dólares ocultos. Pero tan pronto como entran en su casa serán conscientes de su error, pues se encontrarán atrapados y luchando por sobrevivir contra un psicópata con sus propios y temibles secretos.', '2016-09-08', '01:28:00', 'img/films/634b621fca968.jpg', 2, 'Fede Alvarez'),
 (94, 'Stuart Little', 'La familia Little adopta a un encantador joven ratón llamado Stuart, pero el gato de la familia quiere deshacerse de él.', '1999-12-17', '01:24:00', 'img/films/634c7ec47ab16.jpg', 49, ' Rob Minkoff'),
-(95, 'Shrek', 'Un malvado señor exilia a las criaturas de los cuentos de hadas al pantano de un ogro gruñón, que debe emprender una búsqueda y rescatar a una princesa para el señor con el fin de recuperar sus tierras.', '2001-07-19', '00:00:00', 'img/films/634c7f85af0f4.jpg', 49, 'Andrew Adamson'),
+(95, 'Shrek', 'Un malvado señor exilia a las criaturas de los cuentos de hadas al pantano de un ogro gruñón, que debe emprender una búsqueda y rescatar a una princesa para el señor con el fin de recuperar sus tierras.', '2001-07-19', '01:30:00', 'img/films/634c7f85af0f4.jpg', 49, 'Andrew Adamson'),
 (96, 'Toy Story', 'Un vaquero de juguete se encuentra celoso y amenazado cuando un nuevo juguete, un guardián espacial, se convierte en el favorito del niño al que pertenecen.', '1996-03-14', '01:21:00', 'img/films/634c8115f1c92.jpg', 49, ' John Lasseter'),
 (97, 'Cars', 'Un coche de carreras llamado Rayo McQueen se encuentra en Radiador Springs, donde descubre el verdadero significado de la amistad y la familia.', '2006-06-29', '01:57:00', 'img/films/634c81d9e7c28.jpg', 49, ' John Lasseter'),
 (98, 'Ratatouille', 'Una rata que sabe cocinar establece una inusual alianza con un joven trabajador de la cocina de un famoso restaurante de París.', '2007-07-28', '01:51:00', 'img/films/6366b5cfe8fcd.jpg', 49, 'Brad Bird'),
 (99, 'Parásitos', 'La familia Ki-taek, todos desempleados, se ve envuelta en un incidente con la rica y glamurosa familia Parks.', '2019-05-30', '02:12:00', 'img/films/634c83c959b55.jpg', 7, 'Bong Joon-ho'),
 (100, 'Llamas de venganza', 'Una joven trata de entender cómo obtuvo misteriosamente el poder de prender fuego a las cosas con su mente.', '2022-05-13', '01:35:00', 'img/films/634c88eee0df9.jpg', 7, ' Keith Thomas');
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `usuario` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `email`, `usuario`, `password`) VALUES
-(1, 'kino@gmail.com', 'Kino', '$2a$12$yoHsgzW4yDGya7SXvD98LOAj1VhCFv2YppRlzKuDxL8yr4WuTswAu');
-
 --
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `generos`
---
-ALTER TABLE `generos`
-  ADD PRIMARY KEY (`id_genero`);
 
 --
 -- Indices de la tabla `peliculas`
@@ -148,32 +97,14 @@ ALTER TABLE `peliculas`
   ADD KEY `id_genero_fk` (`id_genero_fk`) USING BTREE;
 
 --
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
-
---
--- AUTO_INCREMENT de la tabla `generos`
---
-ALTER TABLE `generos`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
-  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- Restricciones para tablas volcadas
