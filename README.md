@@ -1,6 +1,6 @@
 # API REST PARA EL RECURSO DE PELÍCULAS
 
-Una sencilla API REST para el manejo de CRUD con las películas de PelíKino.
+Una sencilla API REST para el manejo de CRUD con las películas de PeliKino.
 ## Importar la base de datos
 - Importarla desde phpMyAdmin -> database/películas.sql
 - Aclaración: En la base de datos, dentro de la tabla usuarios agregué una nueva columna llamada "usuario".
@@ -60,7 +60,7 @@ Por default, el campo asignado en sortby es "id_pelicula" y el order "asc".
       - Ejemplo: http://localhost/TPE2-WEB2/api/films?section=director&value=andrew%20adamson&order=asc
 - Obtener el token de autenticación -> http://localhost/TPE2-WEB2/api/auth/token  
       
-      Aclaración: Al logearnos correctamente obtendremos el token el status code será "401 Unauthorized".
+      Aclaración: Al logearnos incorrectamente no obtendremos el token y el status code será "401 Unauthorized".
       Si cualquiera de estas solicitudes sale bien, el status code será "200 OK", de lo contrario será "400 Bad Request" (Salvo en la autenticación).
 
 ## GET (Búsqueda por ID):
