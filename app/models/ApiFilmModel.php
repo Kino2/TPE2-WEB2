@@ -29,8 +29,14 @@ class FilmsModel{
             return $this->db->lastInsertId();
     }
     function editFilm($name, $description, $date, $duration, $director, $genre, $id, $image = null){
+        if($image){
             $query = $this->db->prepare("UPDATE peliculas SET nombre = ?, descripcion = ?, fecha = ?, duracion = ?, imagen = ?, id_genero_fk = ?, director = ? WHERE id_pelicula = ? ");
             $query->execute([$name, $description, $date, $duration, $image, $genre, $director, $id]);
+        } else {
+            $query = $this->db->prepare("UPDATE peliculas SET nombre = ?, descripcion = ?, fecha = ?, duracion = ?, id_genero_fk = ?, director = ? WHERE id_pelicula = ? ");
+            $query->execute([$name, $description, $date, $duration, $genre, $director, $id]);
+        }
+
     }
     function deleteFilm($id){
         $query = $this->db->prepare('DELETE FROM peliculas WHERE id_pelicula = ?');
