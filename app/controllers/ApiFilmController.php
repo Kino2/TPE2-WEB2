@@ -133,6 +133,10 @@ class ApiFilmController {
         }
     }
     public function deleteFilm($params = null){
+        if (!$this->authHelper->isLoggedIn()) {
+            $this->view->response("No estas logeado", 401);
+            return;
+        }
         $id = $params[':ID'];
         $film = $this->model->getFilm($id);
         if ($film) {

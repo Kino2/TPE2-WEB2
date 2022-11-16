@@ -60,7 +60,7 @@ Por default, el campo asignado en sortby es "id_pelicula" y el order "asc".
       - Ejemplo: http://localhost/TPE2-WEB2/api/films?section=director&value=andrew%20adamson&order=asc
 - Obtener el token de autenticación -> http://localhost/TPE2-WEB2/api/auth/token  
       
-      Aclaración: Al logearnos incorrectamente no obtendremos el token y el status code será "401 Unauthorized".
+      Aclaración: Si el usuario o la contraseña son incorrectos, no obtendremos el token y el status code será "401 Unauthorized".
       Si cualquiera de estas solicitudes sale bien, el status code será "200 OK", de lo contrario será "400 Bad Request" (Salvo en la autenticación).
 
 ## GET (Búsqueda por ID):
@@ -88,9 +88,10 @@ Es necesario estar logeado para usar este método.
 
 ## DELETE 
 
+Es necesario estar logeado para usar este método.
 - Borrar una película -> http://localhost/TPE2-WEB2/api/films/:ID    
                                                                                                     
-      Aclaración: Si se intenta borrar una película en la que cuya id no exista, el status code será "404 Not found".
+      Aclaración: Si se intenta borrar una película en la que cuya id no exista, el status code será "404 Not found", y si el usuario no se encuentra logeado el status code será "401 Unauthorized".
       Si la solicitud sale bien, el status code sera "200 OK".
 
 ## Detalles a tener en cuenta
