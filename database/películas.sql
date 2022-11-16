@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-11-2022 a las 17:42:16
+-- Tiempo de generación: 16-11-2022 a las 02:21:20
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.10
 
@@ -20,6 +20,31 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `películas`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `generos`
+--
+
+CREATE TABLE `generos` (
+  `id_genero` int(11) NOT NULL,
+  `genero` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `generos`
+--
+
+INSERT INTO `generos` (`id_genero`, `genero`) VALUES
+(1, 'Acción'),
+(2, 'Terror'),
+(4, 'Crimen'),
+(5, 'Fantasía'),
+(6, 'Drama'),
+(7, 'Suspenso'),
+(44, 'Comedia'),
+(49, 'Infantil');
 
 -- --------------------------------------------------------
 
@@ -85,9 +110,35 @@ INSERT INTO `peliculas` (`id_pelicula`, `nombre`, `descripcion`, `fecha`, `durac
 (99, 'Parásitos', 'La familia Ki-taek, todos desempleados, se ve envuelta en un incidente con la rica y glamurosa familia Parks.', '2019-05-30', '02:12:00', 'img/films/634c83c959b55.jpg', 7, 'Bong Joon-ho'),
 (100, 'Llamas de venganza', 'Una joven trata de entender cómo obtuvo misteriosamente el poder de prender fuego a las cosas con su mente.', '2022-05-13', '01:35:00', 'img/films/634c88eee0df9.jpg', 7, ' Keith Thomas');
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `usuario` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `email`, `usuario`, `password`) VALUES
+(1, 'kino@gmail.com', 'Kino', '$2a$12$yoHsgzW4yDGya7SXvD98LOAj1VhCFv2YppRlzKuDxL8yr4WuTswAu');
+
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `generos`
+--
+ALTER TABLE `generos`
+  ADD PRIMARY KEY (`id_genero`);
 
 --
 -- Indices de la tabla `peliculas`
@@ -97,14 +148,32 @@ ALTER TABLE `peliculas`
   ADD KEY `id_genero_fk` (`id_genero_fk`) USING BTREE;
 
 --
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `generos`
+--
+ALTER TABLE `generos`
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
-  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
+  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
