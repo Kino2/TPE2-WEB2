@@ -99,7 +99,7 @@ Es necesario estar logeado para usar este método.
       - Cuando el campo que se detalla en section o sortby no existe, o cuando no se detalla un numero natural de página/limit, se seguirá mostrando el json sin hacer ningún cambio (solo con el order por defecto).
       - Cuando el valor de campo que se detalla en value no existe o cuando la página que se detalla no tiene una coleccion para mostrar, se mostrará un arreglo vacío.
       - Cuando el valor del order no es ni ASC o DESC, saldrá un error con el status code "400 Bad Request".
-      - El usuario correcto para usar el POST y PUT es el que se encuentra en la tabla usuarios de la base de datos. El nombre es: Kino y su Contraseña es: 91218
+      - El usuario correcto para usar el POST, PUT y DELETE es el que se encuentra en la tabla usuarios de la base de datos. El nombre es: Kino y su Contraseña es: 91218
       - Las id de los distintos géneros a la hora de hacer POST o PUT son:
             id_genero_fk = 1 -> Género = Acción
             id_genero_fk = 2 -> Género = Terror
